@@ -9,6 +9,8 @@ const loginSchema = Joi.object({
   username: Joi.string().required(),
   password: Joi.string().min(3).required(),
 });
+const isEmail = Joi.object({ email: Joi.string().email().required() });
+
 const registerCheck = async (req, res, next) => {
   try {
     await registerSchema.validateAsync(req.body);
@@ -26,5 +28,14 @@ const loginCheck = async (req, res, next) => {
     return res.send(error.message);
   }
 };
+const inviteCheck = async (req, res, next) => {
+  try {
+    let con = isEmail.validate(req.body);
+    if (con.error) return res.status(400).send(con.error.message);
+    next();
+  } catch (error) {
+    return res.send(error.message);
+  }
+};
 
-module.exports = { registerCheck, loginCheck };
+module.exports = { registerCheck, loginCheck, inviteCheck };

@@ -3,6 +3,17 @@ const { registerCheck, loginCheck } = require("../controller/validateData");
 const UserSchema = require("../schema/user");
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
+const verifyToken = require("../controller/tokenCheck");
+
+// Get User
+router.get("/", verifyToken, async (req, res) => {
+  try {
+    const user = await UserSchema.findById(req.user.userId).select("-password");
+    res.json(user);
+  } catch (error) {
+    res.status(500).send("Server Error");
+  }
+});
 
 router.post("/register", registerCheck, async (req, res) => {
   try {
@@ -53,7 +64,7 @@ router.post("/login", loginCheck, async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "24h",
+        expiresIn: "7d",
       }
     );
     return res.status(200).json({
@@ -67,5 +78,14 @@ router.post("/login", loginCheck, async (req, res) => {
     return res.status(500).send(error.message);
   }
 });
+
+// router.get("/all", async (req, res) => {
+//   try {
+//     const user = await UserSchema.find().select("-password");
+//     res.json(user);
+//   } catch (error) {
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 module.exports = router;
