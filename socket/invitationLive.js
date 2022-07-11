@@ -14,9 +14,8 @@ const pendingInvitation = async (userId) => {
         pendingInvitation: pendingInvite || [],
       });
     });
-    console.log("list", list);
   } catch (error) {
-    console.log("error pendingInvitation", error);
+    console.log("pendingInvitation", error.message);
   }
 };
 

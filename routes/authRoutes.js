@@ -9,9 +9,10 @@ const verifyToken = require("../controller/tokenCheck");
 router.get("/", verifyToken, async (req, res) => {
   try {
     const user = await UserSchema.findById(req.user.userId).select("-password");
-    res.json(user);
+    return res.json(user);
   } catch (error) {
-    res.status(500).send("Server Error");
+    console.log("Get User", error.message);
+    return res.status(500).send("Server Error");
   }
 });
 
