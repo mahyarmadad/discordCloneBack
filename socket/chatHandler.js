@@ -20,11 +20,8 @@ const updateChat = async (chatId, toSockedId) => {
     if (toSockedId) return io.to(toSockedId).emit("chat-history", conversation);
 
     conversation.participants.forEach((user) => {
-      const conn = getActiveConnections(user.toString());
-      if (!conn?.length) return;
-      conn.forEach((sockedId) =>
-        io.to(sockedId).emit("chat-history", conversation)
-      );
+      let userSockedId = getActiveConnections(user.toString());
+      io.to(userSockedId).emit("chat-history", conversation);
     });
   } catch (error) {
     console.log("await updateChat", error.message);

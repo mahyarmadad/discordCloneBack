@@ -3,8 +3,10 @@ const { getActiveConnections, getIO } = require("./store");
 
 const updateFriends = async (userId) => {
   try {
-    const onlineList = getActiveConnections(userId.toString());
-    if (!onlineList?.length) return;
+    // const onlineList = getActiveConnections(userId.toString());
+    const userSocketId = getActiveConnections(userId.toString());
+    if (!userSocketId) return;
+
     const user = await UserSchema.findById(userId).populate(
       "friends",
       "-password"
@@ -18,11 +20,7 @@ const updateFriends = async (userId) => {
       };
     });
     const io = getIO();
-    onlineList.forEach((item) => {
-      io.to(item).emit("friends", {
-        friendsList: friendsList || [],
-      });
-    });
+    io.to(userSocketId).emit("friends", { friendsList: friendsList || [] });
   } catch (error) {
     console.log("updateFriends", error.message);
   }

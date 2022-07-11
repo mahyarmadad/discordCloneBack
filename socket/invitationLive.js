@@ -7,12 +7,12 @@ const pendingInvitation = async (userId) => {
       .find({ receiverId: userId })
       .populate("senderId", "_id email username");
 
-    const list = getActiveConnections(userId.toString());
+    // const list = getActiveConnections(userId.toString());
+    const userSocketId = getActiveConnections(userId.toString());
+    if (!userSocketId) return;
     const io = getIO();
-    list.forEach((item) => {
-      io.to(item).emit("invitation", {
-        pendingInvitation: pendingInvite || [],
-      });
+    io.to(userSocketId).emit("invitation", {
+      pendingInvitation: pendingInvite || [],
     });
   } catch (error) {
     console.log("pendingInvitation", error.message);
