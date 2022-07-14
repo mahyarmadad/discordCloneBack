@@ -11,7 +11,7 @@ const updateChat = async (chatId, toSockedId) => {
       populate: {
         path: "author",
         model: "user",
-        selectL: "username _id",
+        select: "username _id",
       },
     });
 

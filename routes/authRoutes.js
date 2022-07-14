@@ -9,7 +9,13 @@ const verifyToken = require("../controller/tokenCheck");
 router.get("/", verifyToken, async (req, res) => {
   try {
     const user = await UserSchema.findById(req.user.userId).select("-password");
-    return res.json(user);
+    let token = req.body.token || req.headers["authorization"];
+    return res.status(200).json({
+      id: user._id,
+      email: user.email,
+      username: user.username,
+      token,
+    });
   } catch (error) {
     console.log("Get User", error.message);
     return res.status(500).send("Server Error");
@@ -40,9 +46,12 @@ router.post("/register", registerCheck, async (req, res) => {
 
     return res.status(200).json({
       user: {
-        email: user.email,
-        username: user.username,
-        token,
+        user: {
+          id: user._id,
+          email: user.email,
+          username: user.username,
+          token,
+        },
       },
     });
   } catch (error) {
@@ -70,6 +79,7 @@ router.post("/login", loginCheck, async (req, res) => {
     );
     return res.status(200).json({
       user: {
+        id: user._id,
         email: user.email,
         username: user.username,
         token,
