@@ -6,8 +6,6 @@ const pendingInvitation = async (userId) => {
     const pendingInvite = await invitation
       .find({ receiverId: userId })
       .populate("senderId", "_id email username");
-
-    // const list = getActiveConnections(userId.toString());
     const userSocketId = getActiveConnections(userId.toString());
     if (!userSocketId) return;
     const io = getIO();

@@ -3,7 +3,6 @@ const { getActiveConnections, getIO } = require("./store");
 
 const updateFriends = async (userId) => {
   try {
-    // const onlineList = getActiveConnections(userId.toString());
     const userSocketId = getActiveConnections(userId.toString());
     if (!userSocketId) return;
 
