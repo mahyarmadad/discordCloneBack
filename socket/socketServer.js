@@ -7,6 +7,8 @@ const {
   joinRoom,
   leaveRoom,
   updateRooms,
+  initializeConn,
+  roomSignal,
 } = require("./roomHandler");
 const {
   addSocketUser,
@@ -55,6 +57,12 @@ const registerSockerServer = (server) => {
     });
     socket.on("room-leave", (data) => {
       leaveRoom(socket, data);
+    });
+    socket.on("conn-init", (data) => {
+      initializeConn(socket, data);
+    });
+    socket.on("conn-signal", (data) => {
+      roomSignal(socket, data);
     });
 
     socket.on("disconnect", () => {

@@ -24,7 +24,7 @@ const updateChat = async (chatId, toSockedId) => {
       io.to(userSockedId).emit("chat-history", conversation);
     });
   } catch (error) {
-    console.log("await updateChat", error.message);
+    console.log("updateChat", error.message);
   }
 };
 

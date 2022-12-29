@@ -30,6 +30,14 @@ const joinRoom = (socket, data) => {
   if (!room) return;
   const participants = { userId, socketId };
   joinActiveRoom(room, participants);
+
+  room.participants.forEach((person) => {
+    if (person.socketId !== participants.socketId) {
+      socket.to(person.socketId).emit("conn-prepare", {
+        connectedUserSocketId: participants.socketId,
+      });
+    }
+  });
   updateRooms();
 };
 
@@ -38,7 +46,32 @@ const leaveRoom = (socket, data) => {
   const room = getActiveRoom(roomId);
   if (!room) return;
   leaveActiveRoom(room, socket.id);
+
+  const updatedRoom = getActiveRoom(roomId);
+  if (updatedRoom)
+    updatedRoom.participants.forEach((person) => {
+      socket.to(person.sockedId).emit("room-participant-left", {
+        connectedUserSocketId: socket.id,
+      });
+    });
   updateRooms();
 };
+const initializeConn = (socket, data) => {
+  const initData = { connectedUserSocketId: socket.id };
+  socket.to(data).emit("conn-init", initData);
+};
 
-module.exports = { createRoom, joinRoom, leaveRoom, updateRooms };
+const roomSignal = (socket, data) => {
+  const { signal, connectedUserSocketId } = data;
+  const signalData = { signal, connectedUserSocketId: socket.id };
+  socket.to(connectedUserSocketId).emit("conn-signal", signalData);
+};
+
+module.exports = {
+  createRoom,
+  joinRoom,
+  leaveRoom,
+  updateRooms,
+  initializeConn,
+  roomSignal,
+};
